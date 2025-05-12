@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	firebase "firebase.google.com/go/v4"
 )
 
 func main() {
@@ -16,6 +18,18 @@ func main() {
 }
 
 func leakTestHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	app, err := firebase.NewApp(ctx, nil)
+	if err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	}
+	_, err = app.Auth(ctx)
+	if err != nil {
+		log.Fatalf("error initializing auth client: %v\n", err)
+	}
+
+	// do something
+
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
